@@ -1,0 +1,21 @@
+[0;1;32m●[0m docker.service - Docker Application Container Engine
+     Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+     Active: [0;1;32mactive (running)[0m since Sun 2025-05-11 17:13:07 EDT; 1h 38min ago
+TriggeredBy: [0;1;32m●[0m docker.socket
+       Docs: https://docs.docker.com
+   Main PID: 19173 (dockerd)
+      Tasks: 29
+     Memory: 67.9M
+     CGroup: /system.slice/docker.service
+             └─19173 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+May 11 17:13:07 frank-cornell dockerd[19173]: time="2025-05-11T17:13:07.689239282-04:00" level=info msg="Loading containers: done."
+May 11 17:13:07 frank-cornell dockerd[19173]: time="2025-05-11T17:13:07.951477438-04:00" level=info msg="Docker daemon" commit=01f442b containerd-snapshotter=false storage-driver=overlay2 version=28.1.1
+May 11 17:13:07 frank-cornell dockerd[19173]: time="2025-05-11T17:13:07.951635842-04:00" level=info msg="Initializing buildkit"
+May 11 17:13:07 frank-cornell dockerd[19173]: time="2025-05-11T17:13:07.988307566-04:00" level=info msg="Completed buildkit initialization"
+May 11 17:13:07 frank-cornell dockerd[19173]: time="2025-05-11T17:13:07.999671105-04:00" level=info msg="Daemon has completed initialization"
+May 11 17:13:08 frank-cornell dockerd[19173]: time="2025-05-11T17:13:07.999762034-04:00" level=info msg="API listen on /run/docker.sock"
+May 11 17:13:08 frank-cornell systemd[1]: Started Docker Application Container Engine.
+May 11 17:13:27 frank-cornell dockerd[19173]: time="2025-05-11T17:13:27.815607667-04:00" level=info msg="ignoring event" container=5608c97c06d09b76468ee5fcc45f2f79234c1688200de1d2b79651adf755352b module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+May 11 18:21:27 frank-cornell dockerd[19173]: time="2025-05-11T18:21:27.217695102-04:00" level=info msg="ignoring event" container=b1e629fe06d19c65692e3dd8680d4532632c4643280a7dfbf6c4c59f487140a6 module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+May 11 18:31:37 frank-cornell dockerd[19173]: time="2025-05-11T18:31:37.738571388-04:00" level=info msg="ignoring event" container=945838fb066fdd50658fab47ea2b96d3d9ea2b29141ab8b1517b60b988574c61 module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"

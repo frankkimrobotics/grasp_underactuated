@@ -1,0 +1,2 @@
+Trial_num,Total_rollout_steps,Success,"Final_baseline_cost (0.5,5)",Comp_pos_error,Comp_quat_error,Mpc_horizon,pos_weight
+0,2000,False,16.28189143293889,0.0325612073070054,0.0002575558872376371,6,0.1

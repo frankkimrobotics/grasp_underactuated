@@ -1,0 +1,218 @@
+import numpy as np
+
+from examples.mpc.singlefinger.mustard.params import ExplicitMPCParams
+from planning.mpc_explicit import MPCExplicit
+from envs.singlefinger_env import MjSimulator
+from contact.singlefinger_collision_detection import Contact
+from utils import metrics
+
+# -------------------------------
+#       loop trials
+# -------------------------------
+save_flag=True
+
+
+trial_num = 50
+success_pos_threshold = 0.02
+success_quat_threshold = 0.04
+consecutive_success_time_threshold = 20
+max_rollout_length = 1500
+mpc_horizons = [6]
+pos_weights = [0.05]
+used_pos_weights = []
+used_mpc_horizons = []
+
+if save_flag:
+    save_dir = './examples/mpc/singlefinger/mustard/save'
+    prefix_data_name = 'ours_'
+    save_matrix = []
+    save_data = dict()
+    save_row = 0
+    data_name= f'mustard_w_planner_singlefingerdata_:MPC:{mpc_horizons[0]},pos_weight:{pos_weights[0]}'
+    headers = ['Trial_num','Total_rollout_steps','Success','Final_baseline_cost (0.05 lambda)','Comp_pos_error','Comp_quat_error','Mpc_horizon','pos_weight']
+
+
+
+trial_count = 0
+while trial_count < trial_num:
+    for pos_weight in pos_weights:
+        for mpc_horizon in mpc_horizons:
+
+            # -------------------------------
+            #        init parameters
+            # -------------------------------
+            param = ExplicitMPCParams(rand_seed=trial_count, target_type='ground-rotation',mpc_horizon=mpc_horizon,pos_weight=pos_weight)
+
+
+            # -------------------------------
+            #        init contact
+            # -------------------------------
+            contact = Contact(param)
+
+            # -------------------------------
+            #        init envs
+            # -------------------------------
+            env = MjSimulator(param)
+
+            # -------------------------------
+            #        init planner
+            # -------------------------------
+            mpc = MPCExplicit(param)
+
+            # -------------------------------
+            #        MPC rollout
+            # -------------------------------
+            rollout_step = 0
+            consecutive_success_time = 0
+            stuck_threshold = 0.01  # Threshold for detecting if object is stuck
+            last_obj_pos = None
+            stuck_count = 0
+            max_stuck_steps = 200  # Number of steps to wait before resetting
+
+            # Get the target pose of the object
+            target_pos = param.target_p_
+
+            rollout_q_traj = []
+            while rollout_step < max_rollout_length:
+                if not env.dyn_paused_:
+                    # get state
+                    curr_q = env.get_state()
+                    rollout_q_traj.append(curr_q)
+
+                    # Check if object is stuck 
+                    curr_obj_pos = curr_q[0:3]  # Object position
+                    if last_obj_pos is not None:
+                        pos_diff = np.linalg.norm(curr_obj_pos - last_obj_pos)
+                        if pos_diff < stuck_threshold:
+                            stuck_count += 1
+                        else:
+                            stuck_count = 0
+                    
+                    last_obj_pos = curr_obj_pos
+
+                    # Reset robot position if object is stuck
+                    if stuck_count > max_stuck_steps:
+                        print("Object stuck detected - resetting robot position")
+                        # Get the current position of the robot and object
+
+                        # Get the randomized direction of new_robot_pos based on the current object and robot position
+                        # randomized direction
+                        offset_dir = (last_obj_pos-target_pos)
+                        
+                        
+                        # Generate new random position for robot
+                        new_robot_pos = last_obj_pos + 0.2*offset_dir/np.linalg.norm(offset_dir)
+                        new_robot_pos[2] = new_robot_pos[2] + 0.015
+                        env.reset_robot_position(new_robot_pos)
+                        stuck_count = 0
+                        last_obj_pos = None
+                        continue
+
+                    # -----------------------
+                    #     contact detect
+                    # -----------------------
+                    phi_vec, jac_mat = contact.detect_once(env)
+
+                    # -----------------------
+                    #        planning
+                    # -----------------------
+                    sol = mpc.plan_once(
+                        param.target_p_,
+                        param.target_q_,
+                        curr_q,
+                        phi_vec,
+                        jac_mat,
+                        sol_guess=param.sol_guess_)
+                    param.sol_guess_ = sol['sol_guess']
+                    action = sol['action']
+
+                    # -----------------------
+                    #        simulate
+                    # -----------------------
+                    env.step(action)
+                    rollout_step = rollout_step + 1
+
+                    # -----------------------
+                    #        success check
+                    # -----------------------
+                    curr_q = env.get_state()
+                    comp_pos_error = metrics.comp_pos_error(curr_q[0:3], param.target_p_)
+                    comp_quat_error = metrics.comp_quat_error(curr_q[3:7], param.target_q_)
+                    print(f"\n\npos error:{comp_pos_error}\nquat error:{comp_quat_error}\n\n")
+                    if (metrics.comp_pos_error(curr_q[0:3], param.target_p_) < success_pos_threshold) \
+                            and (metrics.comp_quat_error(curr_q[3:7], param.target_q_) < success_quat_threshold):
+                        consecutive_success_time = consecutive_success_time + 1
+                    else:
+                        consecutive_success_time = 0
+
+                    # -----------------------
+                    #       early termination
+                    # -----------------------
+                    if consecutive_success_time > consecutive_success_time_threshold:
+                        break
+
+            # -------------------------------
+            #        close viewer
+            # -------------------------------
+            env.viewer_.close()
+
+            # -------------------------------
+            #        save data
+            # -------------------------------
+            used_pos_weights.append(param.pos_weight)
+            used_mpc_horizons.append(param.mpc_horizon_)
+            if save_flag:
+                # save
+                if rollout_step < max_rollout_length:
+                    success=True
+                else:
+                    success=False
+                final_baseline_cost = 0.01*comp_pos_error+(1-0.01)*comp_quat_error
+                save_matrix.append([str(trial_count), str(rollout_step), str(success), str(final_baseline_cost), str(comp_pos_error), str(comp_quat_error), str(mpc_horizon), str(pos_weight)])                
+                save_row = save_row+1
+                # save_data.update(target_obj_pos=param.target_p_)
+                # save_data.update(target_obj_quat=param.target_q_)
+                # save_data.update(rollout_traj=np.array(rollout_q_traj))
+                # # success index
+                # if rollout_step < max_rollout_length:
+                #     save_data.update(success=True)
+                # else:
+                #     save_data.update(success=False)
+                # # save to file
+                # metrics.save_data(save_data, data_name=prefix_data_name + 'trial_' + str(trial_count) + '_rollout',
+                #                   save_dir=save_dir)
+
+    trial_count = trial_count + 1
+#save to csv at save_dir
+print(f"used pos weights: {used_pos_weights}")
+print(f"used mpc horizons: {used_mpc_horizons}")
+
+best_MPC_horizons_per_pos_weight = {}
+# Now iterate through the save_matrix
+for row in save_matrix:
+    trial_count, rollout_step, success, final_baseline_cost, comp_pos_error, comp_quat_error, mpc_horizon, pos_weight = row
+    
+    # Convert values to appropriate types
+    success = success == "True"  # Convert string to boolean
+    final_baseline_cost = float(final_baseline_cost)
+    mpc_horizon = int(mpc_horizon)
+    pos_weight = float(pos_weight)
+
+    # Only consider successful trials
+    if pos_weight not in best_MPC_horizons_per_pos_weight:
+        # Initialize with the first encountered value
+        best_MPC_horizons_per_pos_weight[pos_weight] = (mpc_horizon, final_baseline_cost)
+    else:
+        # Update if a lower final_baseline_cost is found
+        best_horizon, best_error = best_MPC_horizons_per_pos_weight[pos_weight]
+        if final_baseline_cost < best_error:
+            best_MPC_horizons_per_pos_weight[pos_weight] = (mpc_horizon, final_baseline_cost)
+
+# Print results
+print("\nBest MPC Horizons for each pos_weight (minimizing 0.5*comp_pos_error+5*comp_quat_error):")
+for pos_weight, (mpc_horizon, final_baseline_cost) in sorted(best_MPC_horizons_per_pos_weight.items()):
+    print(f"Position Weight: {pos_weight}, Best MPC Horizon: {mpc_horizon}, Final_cost: {final_baseline_cost}")
+
+metrics.save_csv_data(save_matrix, data_name=data_name, headers=headers, save_dir=save_dir)
+
+
