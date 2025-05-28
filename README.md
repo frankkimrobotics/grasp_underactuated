@@ -33,7 +33,7 @@ See below for generating metrics and plots from the UKF and manipulation data.
 
 3. perception_rendering
 
-This folder is for blender renders. The files in scripts are the ones that generate all the renders and RGB/depth images. Objects has the objects (textures, objs...).
+This folder is for blender renders, using bproc. The files in scripts are the ones that generate all the renders and RGB/depth images. Objects has the objects (textures, objs...).
 
 
 4. FoundationPose-main
