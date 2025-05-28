@@ -12,12 +12,12 @@ As of May 2025, this repo was organized to generate a bunch of object pose estim
 
 Organization of the Repo:
 
-There are four main modules: a data folder, a high level scripts folder to run each module, a manipulation folder (which includes the key UKF file), a blender rendering folder, and a FoundationPose estimation folder. 
+There are four main modules, each with a separate folder: Data Collection, High Level Scripts (includes evaluation files), Manipulation (includes the UKF file), Blender Rendering, and FoundationPose State Estimation. 
 
 
 1. Scripts
 
-This is the main file to run the pipeline. Currently, the manipulation stack has to be run on its own (see below), but rollout_imgs_main.py is the file that can run both the rendering and pose estimation modules. The eval files generate plots evaluating the estimations from either FoundationPose or the UKF output, generating a bunch of plots. The launch files are needed to setup bproc in the right env (for generating renders). add_noise_to_imgs.py adds noise to the images generated from the render (this was for tuning the UKF).
+This has all the main files needed to run the pipeline, although currently the manipulation stack has to be run on its own (see below). rollout_imgs_main.py is the file that can run both the rendering and pose estimation modules. The eval files generate plots evaluating the estimations from either FoundationPose or the UKF output, generating a bunch of plots. The launch files are needed to setup bproc in the right env (for generating renders). add_noise_to_imgs.py adds noise to the images generated from the render (this was for tuning the UKF).
 
 
 2. Complementarity-Free-Dexterous-Manipulation
