@@ -14,9 +14,11 @@ Organization of the Repo:
 
 There are four main modules: a data folder, a high level scripts folder to run each module, a manipulation folder (which includes the key UKF file), a blender rendering folder, and a FoundationPose estimation folder. 
 
+
 1. Scripts
 
 This is the main file to run the pipeline. Currently, the manipulation stack has to be run on its own (see below), but rollout_imgs_main.py is the file that can run both the rendering and pose estimation modules. The eval files generate plots evaluating the estimations from either FoundationPose or the UKF output, generating a bunch of plots. The launch files are needed to setup bproc in the right env (for generating renders). add_noise_to_imgs.py adds noise to the images generated from the render (this was for tuning the UKF).
+
 
 2. Complementarity-Free-Dexterous-Manipulation
 
@@ -28,8 +30,20 @@ run_save_UKF.py is the main UKF file, which runs it on the FoundationPose data a
 
 See below for generating metrics and plots from the UKF and manipulation data.
 
+
 3. perception_rendering
 
 This folder is for blender renders. The files in scripts are the ones that generate all the renders and RGB/depth images. Objects has the objects (textures, objs...).
 
+
+4. FoundationPose-main
+
+This is the pose estimation stack, which is essentially just FoundationPose from https://nvlabs.github.io/FoundationPose/. This model takes in RGB and depth images along with an object model and then outputs 6DOF estimates of the object pose. It works great.
+
+Currently it is used on the depth and RGB images in the data folder. It should be noted that 
+
+
+5. data
+
+This stores all the data (both temporary and final) from all the modules so that they can communicate.
 
