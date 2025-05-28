@@ -2,7 +2,7 @@ Grasp underactuated: Complemetary Free Manipulation to Pose Estimation Pipeline 
 
 Updated May 28 2025 by Andres Blanco (arb345)
 
-Both Final Reports for this project are here: https://www.andres-blanco.com/work-1/model-based-manipulation-and-estimation-final-projects.
+Both final Reports for this project are [here]([url](https://www.andres-blanco.com/work-1/model-based-manipulation-and-estimation-final-projects)):
 
 <p float="left">
   <img src="https://github.com/user-attachments/assets/2a150068-43e5-4a77-b2d6-a7978860a681" width="300" alt="fp_image" />
