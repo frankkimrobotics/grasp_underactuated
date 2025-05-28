@@ -2,13 +2,15 @@ Grasp underactuated: Complemetary Free Manipulation to Pose Estimation Pipeline 
 
 Updated May 28 2025 by Andres Blanco (arb345)
 
+Both Final Reports for this project are here: https://www.andres-blanco.com/work-1/model-based-manipulation-and-estimation-final-projects.
+
 <p float="left">
   <img src="https://github.com/user-attachments/assets/2a150068-43e5-4a77-b2d6-a7978860a681" width="300" alt="fp_image" />
   <img src="https://github.com/user-attachments/assets/a9a0b723-bf3b-4e1c-b95e-7e1854bbfe24" width="300" alt="image (2)" />
 </p>
 
 
-This repo includes a full pipeline which can perform planning for manipulation tasks on an object using a singular end effector, generate Blender renders of each scene (along with RGB and depth images from a simulated sensor), run FoundationPose to estimate object 6D pose, and then run an Unscented Kalman Filter on the final data.
+This repo includes a full pipeline which can perform planning for manipulation tasks on an object using a singular end effector, generate Blender renders of each scene (along with RGB and depth images from a simulated sensor), run FoundationPose to estimate object 6D pose, and then run an Unscented Kalman Filter on the final estimation data.
 
 As of May 2025, this repo was organized to generate a bunch of object pose estimate data based on a real manipulation trajectory so as to tune the UKF (which was tested on renders with added noise). For an online application this will have to be modified so that each module actively communicates.
 
