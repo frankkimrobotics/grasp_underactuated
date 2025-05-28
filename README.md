@@ -8,7 +8,7 @@ Updated May 28 2025 by Andres Blanco (arb345)
 </p>
 
 
-This repo includes a full pipeline which can perform planning for manipulation tasks on an object using a singular end effector, generate Blender renders of each scene (along with RGB and depth images from a simulated sensor), run FoundationPose to estimate position, and then run an Unscented Kalman Filter on the final data.
+This repo includes a full pipeline which can perform planning for manipulation tasks on an object using a singular end effector, generate Blender renders of each scene (along with RGB and depth images from a simulated sensor), run FoundationPose to estimate object 6D pose, and then run an Unscented Kalman Filter on the final data.
 
 As of May 2025, this repo was organized to generate a bunch of object pose estimate data based on a real manipulation trajectory so as to tune the UKF (which was tested on renders with added noise). For an online application this will have to be modified so that each module actively communicates.
 
