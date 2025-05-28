@@ -8,7 +8,7 @@ Grasp underactuated: Complemetary Free Manipulation to Pose Estimation Pipeline 
 
 This repo includes a full pipeline which can perform planning for manipulation tasks on an object using a singular end effector, generate Blender renders of each scene (along with RGB and depth images from a simulated sensor), run FoundationPose to estimate position, and then run an Unscented Kalman Filter on the final data.
 
-As of May 2025, this repo was organized to generate a bunch of object pose estimate data based on a real manipulation trajectory so as to tune the UKF. For an online application this will have to be modified so that each module actively communicates.
+As of May 2025, this repo was organized to generate a bunch of object pose estimate data based on a real manipulation trajectory so as to tune the UKF (which was tested on renders with added noise). For an online application this will have to be modified so that each module actively communicates.
 
 Organization of the Repo:
 
@@ -40,7 +40,7 @@ This folder is for blender renders. The files in scripts are the ones that gener
 
 This is the pose estimation stack, which is essentially just FoundationPose from https://nvlabs.github.io/FoundationPose/. This model takes in RGB and depth images along with an object model and then outputs 6DOF estimates of the object pose. It works great.
 
-Currently it is used on the depth and RGB images in the data folder. It should be noted that 
+Currently it is used on the depth and RGB images in the data folder. It should be noted that FoundationPose essentially tracks the object, needing th
 
 
 5. data
