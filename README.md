@@ -22,7 +22,7 @@ This is the main file to run the pipeline. Currently, the manipulation stack has
 
 2. Complementarity-Free-Dexterous-Manipulation
 
-This is the manipulation module, which pulls up a mujoco screen and runs one (or more) trials with a given object and end effector. The goal in each trial is to reorient said object from an initial position to a given position. Check the README inside the overall folder for more help on running examples.
+This is the manipulation module, which pulls up a mujoco screen and runs one (or more) trials with a given object and end effector. The goal in each trial is to reorient said object from an initial position to a given position. Check the README inside the overall folder for more help on running examples. Currently everything in this folder has to be run in terminal.
 
 to run an example manipulation sim, go the object folder inside the following path (Complementarity-Free-Dexterous-Manipulation/examples/mpc/singlefinger) and run one of the example/test files. These mostly save to the data folder, but check. To change the setup for each object, change the params.py file. To add a new object copy-paste one of the existing object folders, alter it, and add a new xml file to the envs folder (making sure to use it in params). To try the multi-finger examples go to the other folders in mpc. 
 
@@ -40,10 +40,10 @@ This folder is for blender renders. The files in scripts are the ones that gener
 
 This is the pose estimation stack, which is essentially just FoundationPose from https://nvlabs.github.io/FoundationPose/. This model takes in RGB and depth images along with an object model and then outputs 6DOF estimates of the object pose. It works great.
 
-Currently it is used on the depth and RGB images in the data folder. It should be noted that FoundationPose essentially tracks the object, needing th
+Currently it is used on the depth and RGB images in the data folder. It should be noted that FoundationPose essentially tracks the object, needing a mask and a quality depth and RGB image for the first frame.
 
 
 5. data
 
-This stores all the data (both temporary and final) from all the modules so that they can communicate.
+This stores all the data (both temporary and final) from all the modules so that they can communicate. It is organized by overall module (estimation, manipulation, evauluation...)
 
